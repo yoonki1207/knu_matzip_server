@@ -11,9 +11,9 @@ const database = mysql.createConnection({
 
 database.connect();
 
-// usertbl 생성
+// 유저
 database.query(
-	`CREATE TABLE IF NOT EXISTS usertbl(
+  `CREATE TABLE IF NOT EXISTS usertbl(
     user_id int AUTO_INCREMENT not null PRIMARY KEY, -- 회원 고유번호
     name varchar(24) not null, -- 실명
     birth_year Date not null,
@@ -26,25 +26,27 @@ database.query(
     created_at Date, -- 가입일
     updated_at Date
   );`,
-	function (err, rows) {
-		if (err) throw err;
-	}
+  function (err, rows) {
+    if (err) throw err;
+  }
 );
 
+// 가게정보
 database.query(
-	`CREATE TABLE IF NOT EXISTS storetbl(
+  `CREATE TABLE IF NOT EXISTS storetbl(
     store_id char(16) not null PRIMARY KEY, -- 가게 고유번호
     name varchar(60) not null, -- 가게이름
     category_name char(24),
     content varchar(100) -- 가게 내용(정보) e.g.
   );`,
-	function (err, rows) {
-		if (err) throw err;
-	}
+  function (err, rows) {
+    if (err) throw err;
+  }
 );
 
+// 리뷰
 database.query(
-	`CREATE TABLE IF NOT EXISTS reviewtbl(
+  `CREATE TABLE IF NOT EXISTS reviewtbl(
     id int AUTO_INCREMENT not null PRIMARY KEY, -- 댓글 갯수(?)
     store_id char(16) not null, -- FK (storetbl)
     user_id int, -- FK (usertbl)
@@ -58,22 +60,38 @@ database.query(
     FOREIGN KEY (user_id) REFERENCES usertbl(user_id),
     FOREIGN KEY (nickname) REFERENCES usertbl(nickname)
   );`,
-	function (err, rows) {
-		if (err) throw err;
-	}
+  function (err, rows) {
+    if (err) throw err;
+  }
 );
 
+// 가게 태그
 database.query(
-	`CREATE TABLE IF NOT EXISTS tag_storetbl(
+  `CREATE TABLE IF NOT EXISTS tag_storetbl(
     id int AUTO_INCREMENT not null PRIMARY KEY,
     store_id char(16) not null,
     category_name varchar(20) not null,
   
     FOREIGN KEY (store_id) REFERENCES storetbl(store_id)
   );`,
-	function (err, rows) {
-		if (err) throw err;
-	}
+  function (err, rows) {
+    if (err) throw err;
+  }
+);
+
+// 찜 목록
+database.query(
+  `CREATE TABLE like_list(
+    id int AUTO_INCREMENT not null PRIMARY KEY,
+    store_id char(16) not null,
+    user_id int not null,
+    
+    FOREIGN KEY (store_id) REFERENCES storetbl(store_id),
+    FOREIGN KEY (user_id) REFERENCES usertbl(user_id)
+  );`,
+  function (err, rows) {
+    if (err) throw err;
+  }
 );
 
 module.exports = database;
