@@ -1,102 +1,66 @@
-const { Matrix, inverse } = require("ml-matrix");
+const { Matrix, solve } = require("ml-matrix");
 
-const ratings = [
+const ratings = new Matrix([
 	[5, 3, 0, 1],
 	[4, 0, 0, 1],
 	[1, 1, 0, 5],
 	[1, 0, 0, 4],
 	[0, 1, 5, 4],
-];
-
+]);
 /**
  *
- * @param {number[][]} ratings ratings user x item matrics
- * @param {number} numFactors factors number of user, item's laten factor matrics
+ * @param {Matrix} ratings
+ * @param {number} num_factors
+ * @param {number} steps
+ * @param {number} tolerance
+ * @returns
  */
-function ALS(ratings, numFactors, step = 1) {
-	const numUsers = ratings.length;
-	const numItems = ratings[0].length;
-	let ratingsMatrix = new Matrix(ratings);
+function ALS(ratings, num_factors, steps = 1, tolerance = 0.0001) {
+	const num_users = ratings.rows;
+	const num_items = ratings.columns;
+	let users_latent_matrix = Matrix.rand(num_users, num_factors);
+	let items_latent_matrix = Matrix.rand(num_items, num_factors);
 
-	let usersLatenMatrix = Matrix.rand(numUsers, numFactors);
-	let itemsLatenMatrix = Matrix.rand(numItems, numFactors);
-
-	let tempUserLatemMatrix = [];
-	let tempItemLatemMatrix = [];
-	const IdentityMatrixNumFactors = Matrix.identity(numFactors);
-
-	// reapeat operator
-	for (let i = 0; i < step; i++) {
-		let s = 0;
-		for (let i = 0; i < numUsers; i++) {
-			s += usersLatenMatrix.getRowVector(i).pow(2).sum();
+	for (let step = 0; step < steps; step++) {
+		for (let user = 0; user < num_users; user++) {
+			const user_diag_matrix = Matrix.diag(ratings.getRow(user));
+			const left_side = items_latent_matrix
+				.transpose()
+				.mmul(user_diag_matrix)
+				.mmul(items_latent_matrix)
+				.add(Matrix.eye(num_factors).mul(tolerance));
+			const right_side = items_latent_matrix
+				.transpose()
+				.mmul(user_diag_matrix)
+				.mmul(ratings.getRowVector(user).transpose());
+			users_latent_matrix.setRow(
+				user,
+				solve(left_side, right_side).transpose()
+			);
 		}
 
-		for (let i = 0; i < numItems; i++) {
-			s += itemsLatenMatrix.getColumnVector(i).pow(2).sum();
+		for (let item = 0; item < num_items; item++) {
+			const item_diag_matrix = Matrix.diag(ratings.getColumn(item));
+			const left_side = users_latent_matrix
+				.transpose()
+				.mmul(item_diag_matrix)
+				.mmul(users_latent_matrix)
+				.add(Matrix.eye(num_factors).mul(tolerance));
+			const right_side = users_latent_matrix
+				.transpose()
+				.mmul(item_diag_matrix)
+				.mmul(ratings.getColumnVector(item));
+			items_latent_matrix.setRow(
+				item,
+				solve(left_side, right_side).transpose()
+			);
 		}
-		console.log(s);
-		// update user factors
-		for (let j = 0; j < numUsers; j++) {
-			// repeat u
-			let ratingItemDigonalMatrix = new Matrix(numItems, numItems); // Cu(ixi)
-			for (let i = 0; i < numItems; i++) {
-				ratingItemDigonalMatrix.set(i, i, ratings[j][i]);
-			}
-			let itemsLatenMatrixTranspose = itemsLatenMatrix.transpose();
-			let pu = new Matrix(numItems, 1);
-			for (let l = 0; l < numItems; l++) {
-				pu.set(l, 0, ratingsMatrix.getRow(j)[l] > 0 ? 1 : 0);
-			}
-			let updatedUserMatrix = inverse(
-				itemsLatenMatrixTranspose
-					.mmul(ratingItemDigonalMatrix)
-					.mmul(itemsLatenMatrix)
-					.add(IdentityMatrixNumFactors.mul(s))
-			)
-				.mmul(itemsLatenMatrixTranspose)
-				.mmul(ratingItemDigonalMatrix)
-				.mmul(pu); // f x 1
-			tempUserLatemMatrix.push(updatedUserMatrix.to1DArray());
-		}
-		// update item factors
-		for (let j = 0; j < numItems; j++) {
-			// repeat u
-			let ratingUserDigonalMatrix = new Matrix(numUsers, numUsers); // Cu(ixi)
-			for (let i = 0; i < numUsers; i++) {
-				ratingUserDigonalMatrix.set(i, i, ratings[i][j]);
-			}
-			let usersLatenMatrixTranspose = usersLatenMatrix.transpose();
-			let pu = new Matrix(numUsers, 1);
-			for (let l = 0; l < numUsers; l++) {
-				pu.set(l, 0, ratingsMatrix.getColumn(j)[l] > 0 ? 1 : 0);
-			}
-			let updatedItemMatrix = inverse(
-				usersLatenMatrixTranspose
-					.mmul(ratingUserDigonalMatrix)
-					.mmul(usersLatenMatrix)
-					.add(IdentityMatrixNumFactors.mul(s))
-			)
-				.mmul(usersLatenMatrixTranspose)
-				.mmul(ratingUserDigonalMatrix)
-				.mmul(pu); // f x 1
-			tempItemLatemMatrix.push(updatedItemMatrix.to1DArray());
-		}
-
-		usersLatenMatrix = new Matrix(tempUserLatemMatrix).transpose();
-		itemsLatenMatrix = new Matrix(tempItemLatemMatrix).transpose();
-		ratingsMatrix = usersLatenMatrix.transpose().mmul(itemsLatenMatrix);
 	}
-	// return [usersLatenMatrix, itemsLatenMatrix];
-	return usersLatenMatrix.transpose().mmul(itemsLatenMatrix);
+
+	return users_latent_matrix.mmul(items_latent_matrix.transpose());
 }
-/** @var {Matrix} */
-let result = ALS(ratings, 20);
-let ret = [];
-for (let i = 0; i < result.rows; i++) {
-	let sum = result.getRowVector(i).sum();
-	ret.push(result.getRowVector(i).div(sum));
-}
-console.log(ret);
+
+const result = ALS(ratings, 2);
+console.log(result);
 
 module.exports = ALS;
