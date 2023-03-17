@@ -61,6 +61,6 @@ function ALS(ratings, num_factors, steps = 1, tolerance = 0.0001) {
 }
 
 const result = ALS(ratings, 2);
-console.log(result);
+// console.log(result);
 
 module.exports = ALS;
