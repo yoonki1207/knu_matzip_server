@@ -25,7 +25,7 @@ router.get("/cate/:category", async function (req, res, next) {
 	//  37.270252 127.126146
 	const category_code = req.params.category;
 	const { x, y, radius, page, size, sort } = req.query;
-	console.log(x, y, radius, page, size, sort ?? "s");
+	console.log(x, y, radius, page, size, "s");
 	const apiUrl = `https://dapi.kakao.com/v2/local/search/category.json?category_group_code=${category_code}&y=${
 		y ?? 37.270252
 	}&x=${x ?? 127.126146}&radius=${radius ?? 500}&page=${page ?? 1}&size${
