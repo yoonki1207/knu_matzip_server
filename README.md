@@ -32,7 +32,8 @@ FLUSH PRIVILEGES;
 # Run
 ```
 npm run dev
-
+```
 # stop running
+```
 ctrl + c
 ```
