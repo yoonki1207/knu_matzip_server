@@ -1,5 +1,7 @@
 const connection = require("../database/database");
+const jwt = require("jsonwebtoken");
 
+// access token으로 변경
 const getUser = async (email) => {
 	const qry = "SELECT * FROM usertbl WHERE email=?";
 	try {
@@ -15,8 +17,25 @@ const getUser = async (email) => {
 		console.log(result[0][0]);
 		return result[0][0];
 	} catch {
-		return "error";
+		return null;
 	}
+};
+
+const getPayloadByToken = async (access_token) => {
+	try {
+		const verify = jwt.verify(access_token, process.env.JWT_SECRET);
+		console.log(verify);
+		return verify;
+	} catch (error) {
+		return null;
+	}
+};
+
+const createAccessToken = async (email, name) => {
+	const token = jwt.sign({ email, name }, process.env.JWT_SECRET, {
+		expiresIn: "5m",
+	});
+	return token;
 };
 
 const createUser = async (body) => {
@@ -39,4 +58,4 @@ const createUser = async (body) => {
 	} catch {}
 };
 
-module.exports = { getUser, createUser };
+module.exports = { getUser, getPayloadByToken, createAccessToken, createUser };
