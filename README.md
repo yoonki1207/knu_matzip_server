@@ -22,6 +22,7 @@ DB_NAME = mysql_db_name
 DB_PASSWORD = your_mysql_pwd
 API_KEY = kakaomap_api_rest_api
 BCRYPT_SALT = custom_salt
+JWT_SECRET = jsonwebtoken_secret_key
 ```
 
 프로덕트 단계에서는 파일 이름을 `.env.production`로 변경합니다.
