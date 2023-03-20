@@ -4,17 +4,21 @@ const { printML } = require("../utils/matFac");
 const router = express.Router();
 const authModel = require("../models/auth.model");
 const logToFile = require("../utils/logToFile");
+const requestIp = require("request-ip");
 
 /* The "/auth" route */
 
-router.use(function (req, res, next) {
-	const ip = req.headers["x-forwared-for"] || req.connection.remoteAddress;
-	logToFile(`request '/auth' from  ip '${ip}'`);
+router.use((req, res, next) => {
+	console.log(requestIp.getClientIp(req));
+	console.log(req.connection.remoteAddress);
+	console.log("IP: ", req.headers['X-Forwarded-For'] || req.headers['x-forwarded-for']);
+	const user_ip = req.ip || req.ips;
+	logToFile(`request '/auth' from  ip '${user_ip}'`);
 	next();
 });
 
 router.get("/", function (req, res, next) {
-	res.send("Requested route /auth");
+	res.send(`Requested route /auth`);
 });
 
 // TODO: 임시 route입니다. 수정 및 보안 수정이 필요합니다.
