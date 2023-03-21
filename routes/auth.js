@@ -30,18 +30,26 @@ router.get("/", async (req, res, next) => {
 // TODO: 임시 route입니다. 수정 및 보안 수정이 필요합니다.
 router.post("/login", async (req, res, next) => {
 	const user = await authModel.getUser(req.body.email);
+	if (!user) res.send("Not found user.");
+	const isValid = await bcrypt.compare(req.body.password, user.password);
+	if (!isValid) res.status(400).send("Invalid password.");
 
-	if (!user) res.send("Not found user");
-
-	const token = await authModel.createAccessToken(user.email, user.name);
-	res.send(token);
+	const accessToken = await authModel.createAccessToken(user.email, user.name);
+	const refreshToken = await authModel.createRefreshToken(
+		user.email,
+		user.name
+	);
+	res.send({ accessToken, refreshToken });
 });
 
 router.post("/signup", async (req, res, next) => {
 	const { password } = req.body;
-	const encrypt = await bcrypt.hash(password, process.env.BCRYPT_SALT);
+	const encrypt = await bcrypt.hash(password, +process.env.BCRYPT_SALT);
+	console.log("EE", encrypt);
 	req.body.password = encrypt;
-	const isVaild = await authModel.createUser(req.rbody);
+	const user = await authModel.createUser(req.body);
+	console.log("userCreated", user);
+	res.send(user);
 });
 
 module.exports = router;

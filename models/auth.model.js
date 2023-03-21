@@ -38,24 +38,43 @@ const createAccessToken = async (email, name) => {
 	return token;
 };
 
+const createRefreshToken = async (email, name) => {
+	const token = jwt.sign({ email, name }, process.env.JWT_SECRET, {
+		expiresIn: "2w",
+	});
+	return token;
+};
+
 const createUser = async (body) => {
 	const qry =
 		"INSERT INTO usertbl (name, birth_year, phone_number, email, password, nickname, gender) VALUES (?, ?, ?, ?, ?, ?, ?)";
 	const { name, birth_year, phone_number, email, password, nickname, gender } =
 		body;
+	console.log(name, birth_year);
 
 	try {
-		const result = connection.query(
+		await connection.query(
 			qry,
 			[name, birth_year, phone_number, email, password, nickname, gender],
 			async (error, results, fields) => {
-				if (error) throw error;
-				return await results;
+				console.error(results);
+				if (error) {
+					throw error;
+				}
 			}
 		);
 
-		return await result[0][0];
-	} catch {}
+		return true;
+	} catch (error) {
+		console.log(error);
+		return false;
+	}
 };
 
-module.exports = { getUser, getPayloadByToken, createAccessToken, createUser };
+module.exports = {
+	getUser,
+	getPayloadByToken,
+	createAccessToken,
+	createRefreshToken,
+	createUser,
+};
