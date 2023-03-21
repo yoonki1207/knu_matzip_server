@@ -1,25 +1,12 @@
 /* The "/auth" route */
 const express = require("express");
 const bcrypt = require("bcrypt");
-const { printML } = require("../utils/matFac");
 const router = express.Router();
 const authModel = require("../models/auth.model");
-const logToFile = require("../utils/logToFile");
 const requestIp = require("request-ip");
 
 /* import middlewares */
 const { userAuth } = require("../middlewares/authentication");
-
-/* Middlewares */
-router.use((req, res, next) => {
-	const user_ip =
-		req.headers["X-Forwarded-For"] ||
-		req.connection.address ||
-		req.ip ||
-		req.ips;
-	logToFile(`request '/auth' from  ip '${user_ip}'`);
-	next();
-});
 
 /* Routes */
 router.get("/", userAuth, async (req, res, next) => {

@@ -4,7 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var winston = require("winston");
 var morgan = require("morgan");
-var { createProxyMiddleware } = require("http-proxy-middleware");
+const logToFile = require("./utils/logToFile");
 
 // node env settings
 require("dotenv").config({
@@ -32,11 +32,7 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use(
-	"/api",
-	createProxyMiddleware({ target: "http://localhost:3002", changeOrigin: true })
-);
-
+// log middleware
 app.use(
 	morgan({
 		format:
@@ -44,11 +40,11 @@ app.use(
 		stream: {
 			write: (message) => {
 				winston.info(message);
+				logToFile(message);
 			},
 		},
 	})
 );
-//app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
