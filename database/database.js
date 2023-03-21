@@ -31,11 +31,11 @@ const init = async () => {
 		// 가게정보
 		await database.query(
 			`CREATE TABLE IF NOT EXISTS storetbl(
-      store_id char(16) not null PRIMARY KEY, -- 가게 고유번호
-      name varchar(60) not null, -- 가게이름
-    category_name char(24),
-    content varchar(100) -- 가게 내용(정보) e.g.
-    );`
+        store_id char(16) not null PRIMARY KEY, -- 가게 고유번호
+        name varchar(60) not null, -- 가게이름
+        category_name char(24),
+        content varchar(100) -- 가게 내용(정보) e.g.
+      );`
 		);
 
 		// 리뷰

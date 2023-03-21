@@ -33,7 +33,7 @@ const getPayloadByToken = async (access_token) => {
 
 const createAccessToken = async (email, name) => {
 	const token = jwt.sign({ email, name }, process.env.JWT_SECRET, {
-		expiresIn: "5m",
+		expiresIn: "2h",
 	});
 	return token;
 };
