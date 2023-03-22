@@ -24,7 +24,10 @@ const init = async () => {
         gender char(4),
         role varchar(20), -- 직업 // GUEST(Not KNU Member), VAILD, ADMIN
         created_at Date, -- 가입일
-        updated_at Date
+        updated_at Date,
+        token_id int UNIQUE KEY,
+
+        FOREIGN KEY (token_id) REFERENCES refresh_token(refresh_token_id)
       );`
 		);
 
@@ -77,6 +80,14 @@ const init = async () => {
       FOREIGN KEY (store_id) REFERENCES storetbl(store_id),
     FOREIGN KEY (user_id) REFERENCES usertbl(user_id)
     );`
+		);
+
+		await database.query(
+			`CREATE TABLE IF NOT EXISTS refresh_token(
+        id int AUTO_INCREMENT not null PRIMARY KEY,
+        access_token char(200) not null,
+        refresh_token char(200) not null
+      );`
 		);
 
 		return database;

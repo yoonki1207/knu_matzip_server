@@ -12,7 +12,7 @@ const { userAuth } = require("../middlewares/authentication");
 router.get("/", userAuth, async (req, res, next) => {
 	const access_token = req.headers.authorization.split("Bearer ")[1];
 	const verify = await authModel.getPayloadByToken(access_token);
-	res.send(verify);
+	res.send(`Verified! Hello, ${verify.name}!`);
 });
 
 router.post("/login", async (req, res, next) => {
@@ -26,6 +26,7 @@ router.post("/login", async (req, res, next) => {
 		user.email,
 		user.name
 	);
+	await authModel.setToken(user.user_id, accessToken, refreshToken);
 	res.send({ accessToken, refreshToken });
 });
 
