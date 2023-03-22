@@ -3,7 +3,6 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const router = express.Router();
 const authModel = require("../models/auth.model");
-const requestIp = require("request-ip");
 
 /* import middlewares */
 const { userAuth } = require("../middlewares/authentication");
@@ -27,7 +26,9 @@ router.post("/login", async (req, res, next) => {
 		user.name
 	);
 	await authModel.setToken(user.user_id, accessToken, refreshToken);
-	res.send({ accessToken, refreshToken });
+	res.cookie("access_token", accessToken);
+	res.cookie("refresh_token", refreshToken);
+	res.send("Login Success!");
 });
 
 router.post("/signup", async (req, res, next) => {
