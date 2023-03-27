@@ -1,0 +1,8 @@
+DB_HOST = localhost
+DB_PORT = 3306
+DB_USERNAME = root
+DB_NAME = food_recommend
+DB_PASSWORD = 1234
+API_KEY = kakaomap_api_rest_api
+BCRYPT_SALT = custom_salt
+JWT_SECRET = jsonwebtoken_secret_key

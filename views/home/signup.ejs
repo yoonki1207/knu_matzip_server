@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Test SingUp page(feat. MySQL, NodeJS)</title>
+	</head>
+	<body>
+		<h1>사용자 등록 페이지</h1>
+		<br>
+		<!-- action 부분 고칠 예정. -->
+		<form action="/routes/signup" method="post">
+			<!-- 회원가입 정보 입력 부분 -->
+			<table>
+				<tr>
+					<td><label>이메일</label></td>
+					<td><input type="text" name="email" placeholder="이메일을 입력하세요"></td>
+				</tr>
+				<tr>
+					<td><label>비밀번호</label></td>
+					<td><input type="password" name="password" placeholder="비밀번호를 입력하세요"></td>
+				</tr>
+				<tr>
+					<td><label>별명</label></td>
+					<td><input type="text" name="nickname" placeholder="별명을 입력하세요"></td>
+				</tr>
+				<tr>
+					<td><label>나이</label></td>
+					<td><input type="text" name="age" placeholder="나이를 입력하세요"></td>
+				</tr>
+			</table>
+			<!-- 회원가입 버튼 -->
+			<input type="submit" value="회원가입">
+			
+		</form>
+	</body>
+</html>
