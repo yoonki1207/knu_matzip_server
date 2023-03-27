@@ -24,7 +24,7 @@ const init = async () => {
     await database.query(
 			`CREATE TABLE IF NOT EXISTS usertbl(
         user_id int AUTO_INCREMENT not null PRIMARY KEY comment '회원 고유번호', -- 회원 고유번호
-        name varchar(24) not null comment '회원 실명', -- 실명
+        git varchar(24) not null comment '회원 실명', -- 실명
         birth_year Date not null comment '회원 태어난 년도',
         phone_number varchar(20) not null UNIQUE KEY comment '회원 전화번호', -- (UK)
         email varchar(30) not null UNIQUE KEY comment 'email 겸 로그인 아이디', -- email 겸 로그인 아이디(UK)
