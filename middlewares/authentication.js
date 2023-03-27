@@ -1,4 +1,4 @@
-const authModel = require("../models/auth.model");
+const authModel = require("../services/auth.model");
 
 /**
  *

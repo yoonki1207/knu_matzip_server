@@ -1,7 +1,7 @@
 const axios = require("axios");
 const express = require("express");
 const router = express.Router();
-const kakaomapModel = require("../models/kakaomap.model");
+const kakaomapModel = require("../services/kakaomap.model");
 
 // Deprecated
 router.get("/map/:address", async (req, res) => {
