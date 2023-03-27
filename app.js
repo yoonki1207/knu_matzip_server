@@ -15,11 +15,11 @@ require("dotenv").config({
 var database = require("./database/database");
 
 // import routers
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-var authRouter = require("./routes/auth");
-var mapsRouter = require("./routes/kakaomap");
-var recmdRouter = require("./routes/recmd");
+var indexRouter = require("./controller/index");
+var usersRouter = require("./controller/users");
+var authRouter = require("./controller/auth");
+var mapsRouter = require("./controller/kakaomap");
+var recmdRouter = require("./controller/recmd");
 
 var app = express();
 app.set("trust proxy", true);
