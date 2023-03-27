@@ -26,23 +26,8 @@ const getFoodsWithOptions = async ({
 		});
 
 		// data preprocess
-		const stores = response.data.documents.map((data) => {
-			return {
-				id: data.id,
-				name: data.place_name,
-				category_name: data.category_name.split(" > ")[1] ?? data.category_name,
-				content: data.place_name,
-			};
-		});
-		stores.map(
-			async (store) =>
-				await sotreRepository.setStore(
-					store.id,
-					store.name,
-					store.category_name,
-					store.content
-				)
-		);
+		const stores = response.data.documents;
+		stores.map(async (store) => await sotreRepository.setStore(store));
 
 		return response.data;
 	} catch (error) {
