@@ -1,4 +1,5 @@
 const axios = require("axios");
+const cheerio = require("cheerio");
 const sotreRepository = require("../repository/storeRepository");
 
 const ApiURL = "https://dapi.kakao.com/v2/local/search/category.json";
@@ -35,4 +36,22 @@ const getFoodsWithOptions = async ({
 	}
 };
 
-module.exports = { getFoodsWithOptions };
+/**
+ *
+ * @param {string} place_url
+ */
+const getImageUrl = async (place_url) => {
+	const URL = `https://place.map.kakao.com/main/v/`;
+	var place_number = 0;
+	try {
+		place_number = parseInt(place_url);
+	} catch (error) {
+		console.log(error);
+		return `Error: Cannot parse to Integer with ${place_url}`;
+	}
+	const result = await axios.get(URL + place_number);
+	const image_url = result.data.basicInfo.mainphotourl;
+	return image_url;
+};
+
+module.exports = { getFoodsWithOptions, getImageUrl };
