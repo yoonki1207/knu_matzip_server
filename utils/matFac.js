@@ -60,7 +60,4 @@ function ALS(ratings, num_factors, steps = 1, tolerance = 0.0001) {
 	return users_latent_matrix.mmul(items_latent_matrix.transpose());
 }
 
-// const result = ALS(ratings, 2);
-// console.log(result);
-
 module.exports = ALS;

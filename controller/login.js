@@ -25,8 +25,8 @@ router.set("view engine", "ejs");
 
 /* 회원 가입 페이지 로직 구현 - Cretima */
 // 웹브라우저(회원가입)에서 post로 들어오는 것을 해당 경로로 보내 처리 하겠다는 의미.
-router.post('/routes/signup',(req, res) => {
-	console.log('/routes/signup 호출됨' %{req});
+router.post('/controller/signup',(req, res) => {
+	console.log('/routcontrolleres/signup 호출됨' %{req});
 	
 	// 회원가입 했던 정보들은 req.body에 저장, 그 정보를 뽑아온다. - urlencoded, JSON 덕분에 필요 정보들끼리 분류해줌.
 	const paramId = req.body.email; 

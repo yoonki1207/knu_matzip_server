@@ -1,7 +1,7 @@
 const axios = require("axios");
 const express = require("express");
 const router = express.Router();
-const kakaomapModel = require("../services/kakaomap.service");
+const kakaoService = require("../services/kakaomap.service");
 
 // Deprecated
 router.get("/map/:address", async (req, res) => {
@@ -24,12 +24,18 @@ router.get("/map/:address", async (req, res) => {
 
 router.get("/cate/:category_group_code", async function (req, res, next) {
 	try {
-		const data = await kakaomapModel.getFoodsWithOptions(req.query);
+		const data = await kakaoService.getFoodsWithOptions(req.query);
 		res.send(data);
 	} catch (error) {
 		console.error(error);
 		res.status(500).send("Internal Server Error");
 	}
+});
+
+router.post("/place", async (req, res, next) => {
+	const place_url = req.body.place_id;
+	const result = await kakaoService.getImageUrl(place_url);
+	res.send(result);
 });
 
 module.exports = router;

@@ -1,3 +1,4 @@
+// 데이터베이스에 대한 로직 
 const connection = require("../database/database");
 const jwt = require("jsonwebtoken");
 const database = require("../database/database");
