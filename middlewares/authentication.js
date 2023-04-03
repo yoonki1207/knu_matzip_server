@@ -1,4 +1,5 @@
 const authModel = require("../services/auth.service");
+const authService = require("../services/auth.service");
 
 /**
  *
@@ -46,4 +47,32 @@ const userAuth = async (req, res, next) => {
 	}
 };
 
-module.exports = { userAuth };
+/**
+ *
+ * @param {Request<ParamsDictionary, any, any, qs.ParsedQs, Record<string, any>>} req
+ * @param {Response<any, Record<string, any>, number>} res
+ * @param {NextFunction} next
+ */
+const insertUserToken = async (req, res, next) => {
+	const user = req.user;
+	if (!user) res.status(500).send("Server error");
+	const accessToken = await authService.createAccessToken(
+		user.email,
+		user.name
+	);
+	const refreshToken = await authService.createRefreshToken(
+		user.email,
+		user.name
+	);
+	try {
+		await authService.setToken(user.user_id, accessToken, refreshToken);
+		res.cookie("access_token", accessToken);
+		res.cookie("refresh_token", refreshToken);
+		next();
+	} catch (e) {
+		console.error(e);
+		res.status(500).send("Server token error");
+	}
+};
+
+module.exports = { userAuth, insertUserToken };

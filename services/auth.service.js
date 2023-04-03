@@ -64,6 +64,7 @@ const createRefreshToken = async (email, name) => {
 const setToken = async (user_id, access_token, refresh_token) => {
 	try {
 		const user = await getUserById(user_id);
+		if (!user) throw new Error("Not foun user.");
 		const qry =
 			"INSERT INTO refresh_token (access_token, refresh_token) VALUES (?, ?);";
 		const token_id = user.token_id;
