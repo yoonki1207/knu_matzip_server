@@ -1,7 +1,7 @@
 /* HTTP메소드 함수 안에 있는 콜백함수
 서버에 요청이 가기 전에 작업들을 처리(프런트, 백엔드 서로 다른 어플리케이션이 통신하는데 사용됨)
 */
-const authModel = require("../models/auth.model");
+const authModel = require("../services/auth.service");
 
 /**
  *

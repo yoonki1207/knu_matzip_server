@@ -3,7 +3,7 @@ const axios = require("axios");
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const authModel = require("../models/auth.model");
+const authModel = require("../services/auth.service");
 
 // 인기 있는 모듈 api
 router.get("/popular", async (req, res) => {
