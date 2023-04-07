@@ -18,10 +18,13 @@ const userAuth = async (req, res, next) => {
 			if (verifyToken && isValidRefreshToken) {
 				console.log("VALID REFRESH:", isValidRefreshToken);
 				console.log(verifyToken.email, verifyToken.name);
-				res.cookie(
-					"access_token",
-					await authModel.createAccessToken(verifyToken.email, verifyToken.name)
+				const access_token = await authModel.createAccessToken(
+					verifyToken.email,
+					verifyToken.name
 				);
+				const user = authService.getUser(email);
+				await authService.setToken(user.user_id, access_token, refresh_token);
+				res.cookie("access_token", access_token);
 			}
 			next();
 		} else {
