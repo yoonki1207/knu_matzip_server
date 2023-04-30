@@ -64,12 +64,12 @@ const init = async () => {
 		// 리뷰
 		await database.query(
 			`CREATE TABLE IF NOT EXISTS reviewtbl(
-        id int AUTO_INCREMENT not null PRIMARY KEY, -- 댓글 갯수(?)
+        id int AUTO_INCREMENT not null PRIMARY KEY,
         store_id char(16) not null, -- FK (storetbl)
         user_id int, -- FK (usertbl)
         nickname char(16), -- FK(usertbl)
         content varchar(100), -- 리뷰 내용
-        rating float UNIQUE KEY, -- 평점 UK
+        rating int(16), -- 평점 
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP, -- 가입일
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         deleted_at DATETIME,
