@@ -22,9 +22,11 @@ router.post(
 		if (!user) res.send("Not found user.");
 		const isValid = await bcrypt.compare(req.body.password, user.password);
 		if (!isValid) res.status(400).send("Invalid password.");
-		// 다음 미들웨어
-		req.user = user;
-		next();
+		else {
+			// 다음 미들웨어
+			req.user = user;
+			next();
+		}
 	},
 	insertUserToken,
 	async (req, res) => {
