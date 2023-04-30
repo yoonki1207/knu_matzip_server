@@ -19,7 +19,10 @@ router.post(
 	"/login",
 	async (req, res, next) => {
 		const user = await authService.getUser(req.body.email);
-		if (!user) res.send("Not found user.");
+		if (!user) {
+			res.send("Not found user.");
+			return;
+		}
 		const isValid = await bcrypt.compare(req.body.password, user.password);
 		if (!isValid) res.status(400).send("Invalid password.");
 		else {
