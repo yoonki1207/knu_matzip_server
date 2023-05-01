@@ -51,11 +51,17 @@ router.post(
 		const user = await authService.createUser(req.body);
 
 		// 예외처리
-		if (!user) res.status(400).send("Invalid body.");
+		if (!user) {
+			res.status(400).send("Invalid body.");
+			return;
+		}
 		const newUser = await authService.getUser(req.body.email);
 
 		// 예외처리
-		if (!newUser) res.status(500).send("Cannot find user.");
+		if (!newUser) {
+			res.status(500).send("Cannot find user.");
+			return;
+		}
 		//다음 미들웨어
 		req.user = newUser;
 		next();
