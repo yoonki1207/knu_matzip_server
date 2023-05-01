@@ -22,16 +22,19 @@ const userAuth = async (req, res, next) => {
 					verifyToken.email,
 					verifyToken.name
 				);
-				const user = authService.getUser(email);
+				const user = await authService.getUser(verifyToken.email);
 				await authService.setToken(user.user_id, access_token, refresh_token);
 				res.cookie("access_token", access_token);
 			}
+			req.user = user;
 			next();
 		} else {
 			const access_token = req.headers.authorization.split("Bearer ")[1];
 			const verify = await authModel.verifyToken(access_token);
 			if (verify) {
 				console.log(verify);
+				const user = await authService.getUser(verify.email);
+				req.user = user;
 				next();
 			} else {
 				const payload = authModel.getPayloadByToken(access_token);

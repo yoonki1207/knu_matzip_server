@@ -11,7 +11,8 @@ const { userAuth, insertUserToken } = require("../middlewares/authentication");
 router.get("/", userAuth, async (req, res, next) => {
 	const access_token = req.headers.authorization.split("Bearer ")[1];
 	const verify = await authService.getPayloadByToken(access_token);
-	res.send(`Verified! Hello, ${verify.name}!`);
+	console.log("asdasd", req.user);
+	res.send(`Verified! Hello, ${req.user.nickname}!`);
 });
 
 /* Login */

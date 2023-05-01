@@ -49,7 +49,7 @@ const isValidRefreshToken = async (refresh_token) => {
 
 const createAccessToken = async (email, name) => {
 	const token = jwt.sign({ email, name }, process.env.JWT_SECRET, {
-		expiresIn: "1m",
+		expiresIn: "10m",
 	});
 	return token;
 };
@@ -73,25 +73,27 @@ const setToken = async (user_id, access_token, refresh_token) => {
 		}
 		const result = await database.query(qry, [access_token, refresh_token]);
 		const insertId = result[0].insertId;
-		await database.query("UPDATE usertbl SET token_id=? WHERE user_id=?", [
-			insertId,
-			user_id,
-		]);
+		// await database.query("UPDATE usertbl SET token_id=? WHERE user_id=?", [
+		// 	insertId,
+		// 	user_id,
+		// ]);
+		return result;
 	} catch (error) {
 		console.error(error);
+		return "Failed to insert token pair.";
 	}
 };
 const createUser = async (body) => {
-	const qry =
-		"INSERT INTO usertbl (name, birth_year, phone_number, email, password, nickname, gender) VALUES (?, ?, ?, ?, ?, ?, ?)";
-	const { name, birth_year, phone_number, email, password, nickname, gender } =
-		body;
-	console.log(name, birth_year);
+	const qry = `INSERT INTO usertbl 
+			(birth_year, phone_number, email, password, nickname, gender) 
+			VALUES (?, ?, ?, ?, ?, ?)`;
+	const { birth_year, phone_number, email, password, nickname, gender } = body;
+	console.log(birth_year);
 
 	try {
 		await connection.query(
 			qry,
-			[name, birth_year, phone_number, email, password, nickname, gender],
+			[birth_year, phone_number, email, password, nickname, gender],
 			async (error, results, fields) => {
 				console.error(results);
 				if (error) {
