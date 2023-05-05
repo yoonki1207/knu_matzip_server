@@ -1,6 +1,4 @@
-const authModel = require("../services/auth.service");
 const authService = require("../services/auth.service");
-
 /**
  *
  * @param {Request<ParamsDictionary, any, any, qs.ParsedQs, Record<string, any>>} req
@@ -8,49 +6,46 @@ const authService = require("../services/auth.service");
  * @param {NextFunction} next
  */
 const userAuth = async (req, res, next) => {
-	try {
-		const refresh_token = req.headers["refresh_token"];
-		if (refresh_token) {
-			const verifyToken = await authModel.verifyToken(refresh_token);
-			const isValidRefreshToken = await authModel.isValidRefreshToken(
-				refresh_token
-			);
-			if (verifyToken && isValidRefreshToken) {
-				console.log("VALID REFRESH:", isValidRefreshToken);
-				console.log(verifyToken.email, verifyToken.name);
-				const access_token = await authModel.createAccessToken(
-					verifyToken.email,
-					verifyToken.name
-				);
-				const user = await authService.getUser(verifyToken.email);
-				await authService.setToken(user.user_id, access_token, refresh_token);
-				res.cookie("access_token", access_token);
-			}
-			req.user = user;
-			next();
+	const access_token = req.headers.authorization.split("Bearer ")[1];
+	const verify = await authService.verifyToken(access_token);
+	if (!verify) {
+		// AT is invalid. It can be expried or not a token.
+		const isExpired = await authService.isExpriedToken(access_token);
+		console.log(isExpired);
+		if (!isExpired || isExpired === null) {
+			res.status(400).send("Valid access token requried.");
+			return;
 		} else {
-			const access_token = req.headers.authorization.split("Bearer ")[1];
-			const verify = await authModel.verifyToken(access_token);
-			if (verify) {
-				console.log(verify);
-				const user = await authService.getUser(verify.email);
-				req.user = user;
+			// AT is valid and expried.
+			const refresh_token = req.headers["refresh_token"];
+			if (!refresh_token) {
+				res.status(400).send("Try request with refresh_token again.");
+			}
+			const result = await authService.findTokenWithRT(refresh_token);
+			if (result.access_token === access_token) {
+				// re-authorization.
+				const payload = authService.getPayloadByToken(refresh_token);
+				const nat = authService.createAccessToken(
+					payload.email,
+					payload.nickname
+				);
+				res.cookie("access_token", nat);
+				req.user = payload;
+				console.log("RT", payload);
 				next();
 			} else {
-				const payload = authModel.getPayloadByToken(access_token);
-				if (payload) {
-					res
-						.status(400)
-						.send("Token is expired. Request the refresh token to server.");
-				} else {
-					throw new Error();
-				}
+				// return false and drop the record. Client should to login again.
 			}
+			return;
 		}
-	} catch (error) {
-		console.log(error);
-		res.status(400).send("Invalid access token. Request refresh token.");
+	} else {
+		// AT is valid.
+		const payload = authService.getPayloadByToken(access_token);
+		req.user = payload;
+		console.log("AT", payload);
+		next();
 	}
+	return;
 };
 
 /**
@@ -64,11 +59,11 @@ const insertUserToken = async (req, res, next) => {
 	if (!user) res.status(500).send("Server error");
 	const accessToken = await authService.createAccessToken(
 		user.email,
-		user.name
+		user.nickname
 	);
 	const refreshToken = await authService.createRefreshToken(
 		user.email,
-		user.name
+		user.nickname
 	);
 	try {
 		await authService.setToken(user.user_id, accessToken, refreshToken);
