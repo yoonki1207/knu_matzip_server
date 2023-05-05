@@ -30,18 +30,18 @@ const userAuth = async (req, res, next) => {
 					payload.nickname
 				);
 				res.cookie("access_token", nat);
-				req.user = payload;
+				req.user = await authService.getUser(payload.email);
 				console.log("RT", payload);
 				next();
 			} else {
-				// return false and drop the record. Client should to login again.
+				// TODO: return false and drop the record. Client should to login again.
 			}
 			return;
 		}
 	} else {
 		// AT is valid.
 		const payload = authService.getPayloadByToken(access_token);
-		req.user = payload;
+		req.user = await authService.getUser(payload.email);
 		console.log("AT", payload);
 		next();
 	}
