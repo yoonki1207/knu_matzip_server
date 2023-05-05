@@ -73,7 +73,7 @@ const createToken = (email, nickname, expiresIn) => {
 };
 
 const createAccessToken = (email, nickname) => {
-	return createToken(email, nickname, "30s");
+	return createToken(email, nickname, "30m");
 };
 
 const createRefreshToken = (email, nickname) => {
