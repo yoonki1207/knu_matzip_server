@@ -41,24 +41,43 @@ const verifyToken = async (token) => {
 	}
 };
 
+/**
+ * It returns true when token is expired,
+ * It returns false when token is not expred,
+ * It returns null when invalud token.
+ * @param {string} token access token.
+ * @returns boolean
+ */
+const isExpriedToken = async (token) => {
+	const payload = await getPayloadByToken(token);
+	if (!payload) {
+		console.error("Invalid token from isExpriedToken().");
+		return null;
+	}
+	const exp = payload.exp;
+	const now = (new Date().getTime() + 1) / 1000;
+	return exp < now;
+};
+
 const isValidRefreshToken = async (refresh_token) => {
 	const qry = "SELECT * FROM refresh_token WHERE refresh_token=?";
 	const result = await database.query(qry, [refresh_token]);
 	return result[0][0];
 };
 
-const createAccessToken = async (email, name) => {
-	const token = jwt.sign({ email, name }, process.env.JWT_SECRET, {
-		expiresIn: "1m",
+const createToken = (email, nickname, expiresIn) => {
+	const token = jwt.sign({ email, nickname }, process.env.JWT_SECRET, {
+		expiresIn,
 	});
 	return token;
 };
 
-const createRefreshToken = async (email, name) => {
-	const token = jwt.sign({ email, name }, process.env.JWT_SECRET, {
-		expiresIn: "1w",
-	});
-	return token;
+const createAccessToken = (email, nickname) => {
+	return createToken(email, nickname, "30m");
+};
+
+const createRefreshToken = (email, nickname) => {
+	return createToken(email, nickname, "1w");
 };
 
 const setToken = async (user_id, access_token, refresh_token) => {
@@ -73,25 +92,27 @@ const setToken = async (user_id, access_token, refresh_token) => {
 		}
 		const result = await database.query(qry, [access_token, refresh_token]);
 		const insertId = result[0].insertId;
-		await database.query("UPDATE usertbl SET token_id=? WHERE user_id=?", [
-			insertId,
-			user_id,
-		]);
+		// await database.query("UPDATE usertbl SET token_id=? WHERE user_id=?", [
+		// 	insertId,
+		// 	user_id,
+		// ]);
+		return result;
 	} catch (error) {
 		console.error(error);
+		return "Failed to insert token pair.";
 	}
 };
 const createUser = async (body) => {
-	const qry =
-		"INSERT INTO usertbl (name, birth_year, phone_number, email, password, nickname, gender) VALUES (?, ?, ?, ?, ?, ?, ?)";
-	const { name, birth_year, phone_number, email, password, nickname, gender } =
-		body;
-	console.log(name, birth_year);
+	const qry = `INSERT INTO usertbl 
+			(birth_year, phone_number, email, password, nickname, gender) 
+			VALUES (?, ?, ?, ?, ?, ?)`;
+	const { birth_year, phone_number, email, password, nickname, gender } = body;
+	console.log(birth_year);
 
 	try {
 		await connection.query(
 			qry,
-			[name, birth_year, phone_number, email, password, nickname, gender],
+			[birth_year, phone_number, email, password, nickname, gender],
 			async (error, results, fields) => {
 				console.error(results);
 				if (error) {
@@ -102,7 +123,22 @@ const createUser = async (body) => {
 
 		return true;
 	} catch (error) {
-		console.log(error);
+		console.error(error);
+		return false;
+	}
+};
+
+const findTokenWithRT = async (token) => {
+	const qry = `SELECT * FROM refresh_token WHERE refresh_token=?`;
+	try {
+		const result = await connection.query(
+			qry,
+			[token],
+			async (error, results, fileds) => {}
+		);
+		return result[0][0];
+	} catch (error) {
+		console.error(error);
 		return false;
 	}
 };
@@ -117,4 +153,6 @@ module.exports = {
 	createRefreshToken,
 	setToken,
 	createUser,
+	isExpriedToken,
+	findTokenWithRT,
 };

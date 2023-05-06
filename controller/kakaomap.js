@@ -32,8 +32,8 @@ router.get("/cate/:category_group_code", async function (req, res, next) {
 	}
 });
 
-router.post("/place", async (req, res, next) => {
-	const place_url = req.body.place_id;
+router.get("/place/:id", async (req, res, next) => {
+	const place_url = req.params.id;
 	const result = await kakaoService.getImageUrl(place_url);
 	res.send(result);
 });
