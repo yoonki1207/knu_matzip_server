@@ -18,6 +18,7 @@ router.get("/", userAuth, async (req, res, next) => {
 router.post(
 	"/login",
 	async (req, res, next) => {
+		// user data DB에서 가져오기 - authService.getUser 참고
 		const user = await authService.getUser(req.body.email);
 		if (!user) res.send("Not found user.");
 		const isValid = await bcrypt.compare(req.body.password, user.password);
