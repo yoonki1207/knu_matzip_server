@@ -11,7 +11,8 @@ const { userAuth, insertUserToken } = require("../middlewares/authentication");
 router.get("/", userAuth, async (req, res, next) => {
 	const access_token = req.headers.authorization.split("Bearer ")[1];
 	const verify = await authService.getPayloadByToken(access_token);
-	res.send(`Verified! Hello, ${verify.name}!`);
+	console.log("asdasd", req.user);
+	res.send(`Verified! Hello, ${req.user.nickname}!`);
 });
 
 /* Login */
@@ -20,12 +21,17 @@ router.post(
 	async (req, res, next) => {
 		// user data DB에서 가져오기 - authService.getUser 참고
 		const user = await authService.getUser(req.body.email);
-		if (!user) res.send("Not found user.");
+		if (!user) {
+			res.send("Not found user.");
+			return;
+		}
 		const isValid = await bcrypt.compare(req.body.password, user.password);
 		if (!isValid) res.status(400).send("Invalid password.");
-		// 다음 미들웨어
-		req.user = user;
-		next();
+		else {
+			// 다음 미들웨어
+			req.user = user;
+			next();
+		}
 	},
 	insertUserToken,
 	async (req, res) => {
@@ -47,11 +53,17 @@ router.post(
 		const user = await authService.createUser(req.body);
 
 		// 예외처리
-		if (!user) res.status(400).send("Invalid body.");
+		if (!user) {
+			res.status(400).send("Invalid body.");
+			return;
+		}
 		const newUser = await authService.getUser(req.body.email);
 
 		// 예외처리
-		if (!newUser) res.status(500).send("Cannot find user.");
+		if (!newUser) {
+			res.status(500).send("Cannot find user.");
+			return;
+		}
 		//다음 미들웨어
 		req.user = newUser;
 		next();
