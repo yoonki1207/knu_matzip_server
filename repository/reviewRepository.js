@@ -12,7 +12,7 @@ const createReview = async (review) => {
 		return result;
 	} catch (error) {
 		console.error(error);
-		return "Failed to insert";
+		return "Query incorrect - Failed to insert";
 	}
 };
 
@@ -26,7 +26,7 @@ const readReview = async (review) => {
 		return result;
 	} catch (error){
 		console.error(error);
-		return "Failed to Read review"
+		return "Query incorrect - Failed to Read review"
 	}
 };
 
@@ -40,7 +40,7 @@ const updateReview = async (review) => {
 		return result;
 	} catch (error) {
 		console.error(error);
-		return "Failed to update";
+		return "Query incorrect - Failed to update";
 	}
 };
 
@@ -53,7 +53,7 @@ const deleteReview = async (review) => {
 		return result;
 	} catch (error) {
 		console.error(error);
-		return "Failed to delete";
+		return "Query incorrect - Failed to delete";
 	}
 };
 
