@@ -22,6 +22,8 @@ const userAuth = async (req, res, next) => {
 				res.status(400).send("Try request with refresh_token again.");
 			}
 			const result = await authService.findTokenWithRT(refresh_token);
+			console.log("AC", result.access_token);
+			console.log("AS", access_token);
 			if (result.access_token === access_token) {
 				// re-authorization.
 				const payload = authService.getPayloadByToken(refresh_token);
@@ -35,6 +37,8 @@ const userAuth = async (req, res, next) => {
 				next();
 			} else {
 				// TODO: return false and drop the record. Client should to login again.
+				console.log("Required RT.", refresh_token);
+				res.status(400).send("Requied RT.");
 			}
 			return;
 		}
