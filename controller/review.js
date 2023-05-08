@@ -31,6 +31,7 @@ router.get("/", async (req, res, next) => {
 		res.send("failed read review")
 		return; 
 	}
+	// 리뷰를 볼 html 파일 링크 - render
 	res.render('');
 	res.send(review);
 });
@@ -58,3 +59,5 @@ router.delete("/:store_id", async (req, res, next) => {
 	}
 	res.send(review);
 });
+
+module.exports = router;

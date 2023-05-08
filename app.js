@@ -20,6 +20,7 @@ var usersRouter = require("./controller/users");
 var authRouter = require("./controller/auth");
 var mapsRouter = require("./controller/kakaomap");
 var recmdRouter = require("./controller/recmd");
+var reviewRouter = require("./controller/review");
 
 var app = express();
 app.set("trust proxy", true);
@@ -56,6 +57,7 @@ app.use("/users", usersRouter);
 app.use("/auth", authRouter);
 app.use("/maps", mapsRouter);
 app.use("/recmd", recmdRouter);
+app.use("/review", reviewRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
