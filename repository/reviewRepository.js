@@ -8,7 +8,12 @@ const createReview = async (store_id, user_id, content, rating) => {
   (store_id, user_id, content, rating)
 	VALUES(?, ?, ?, ?);`;
 	try {
-		const result = await connection.query(qry, [store_id, user_id, content, rating]);
+		const result = await connection.query(qry, [
+			store_id,
+			user_id,
+			content,
+			rating,
+		]);
 		return true;
 	} catch (error) {
 		console.error(error);
@@ -17,26 +22,31 @@ const createReview = async (store_id, user_id, content, rating) => {
 };
 
 // review 조회하기(Read)
-const readReview = async (review) => {
+const readReview = async (store_id) => {
 	const qry = `SELECT * FROM reviewtbl WHERE store_id = ?`;
 	// 예외 처리
-	try{
+	try {
 		// DB에 있는 정보를 review에 저장 및 리턴
-		const result = await connection.query(qry, [review]);
+		const result = await connection.query(qry, [store_id]);
 		return result[0][0];
-	} catch (error){
+	} catch (error) {
 		console.error(error);
-		return "Query incorrect - Failed to Read review"
+		return "Query incorrect - Failed to Read review";
 	}
 };
 
 // review 업데이트(Update)
-const updateReview = async (review) => {
+const updateReview = async (content, rating, store_id, user_id) => {
 	const qry = `UPDATE reviewtbl
   SET content = ?, rating = ?
 	WHERE store_id = ? AND user_id = ?`;
 	try {
-		const result = await connection.query(qry, [review]);
+		const result = await connection.query(qry, [
+			content,
+			rating,
+			store_id,
+			user_id,
+		]);
 		return result[0][0];
 	} catch (error) {
 		console.error(error);
@@ -45,11 +55,11 @@ const updateReview = async (review) => {
 };
 
 // review 삭제(Delete)
-const deleteReview = async (review) => {
+const deleteReview = async (store_id, user_id) => {
 	const qry = `DELETE FROM reviewtbl 
 	WHERE store_id = ? AND user_id = ?`;
 	try {
-		const result = await connection.query(qry, [review]);
+		const result = await connection.query(qry, [store_id, user_id]);
 		return result[0][0];
 	} catch (error) {
 		console.error(error);
