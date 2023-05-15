@@ -3,13 +3,13 @@
 const connection = require("../database/database");
 
 // review 작성(Create)
-const createReview = async (review) => {
+const createReview = async (store_id, user_id, content, rating) => {
 	const qry = `INSERT INTO reviewtbl
   (store_id, user_id, content, rating)
 	VALUES(?, ?, ?, ?);`;
 	try {
-		const result = await connection.query(qry, [review]);
-		return result;
+		const result = await connection.query(qry, [store_id, user_id, content, rating]);
+		return true;
 	} catch (error) {
 		console.error(error);
 		return "Query incorrect - Failed to insert";
@@ -23,7 +23,7 @@ const readReview = async (review) => {
 	try{
 		// DB에 있는 정보를 review에 저장 및 리턴
 		const result = await connection.query(qry, [review]);
-		return result;
+		return result[0][0];
 	} catch (error){
 		console.error(error);
 		return "Query incorrect - Failed to Read review"
@@ -37,7 +37,7 @@ const updateReview = async (review) => {
 	WHERE store_id = ? AND user_id = ?`;
 	try {
 		const result = await connection.query(qry, [review]);
-		return result;
+		return result[0][0];
 	} catch (error) {
 		console.error(error);
 		return "Query incorrect - Failed to update";
@@ -50,14 +50,11 @@ const deleteReview = async (review) => {
 	WHERE store_id = ? AND user_id = ?`;
 	try {
 		const result = await connection.query(qry, [review]);
-		return result;
+		return result[0][0];
 	} catch (error) {
 		console.error(error);
 		return "Query incorrect - Failed to delete";
 	}
 };
 
-module.exports = { createReview };
-module.exports = { readReview };
-module.exports = { updateReview };
-module.exports = { deleteReview };
+module.exports = { createReview, readReview, updateReview, deleteReview };

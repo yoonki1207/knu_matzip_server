@@ -30,8 +30,4 @@ const delReview = async(store_id, user_id) => {
 	return await deleteReview(store_id, user_id);
 };
 
-module.exports = { writeReview };
-module.exports = { getReview };
-module.exports = { rewriteReview };
-module.exports = { delReview };
-
+module.exports = { writeReview, getReview, rewriteReview, delReview, readReview};
