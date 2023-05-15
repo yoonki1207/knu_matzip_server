@@ -12,12 +12,6 @@ router.post("/:store_id", userAuth, async (req, res, next) => {
 		res.status(400).send("failed create review")
 		return; 
 	}
-	// 로그인된 회원만 리뷰 입력 가능
-	// const user = user.find(u => u.user_id === parseInt(req.params.user_id))
-	// if(!user){
-	// 	res.status(404).send('Please login - only member can review')
-	// 	return;
-	// }
 	res.send(review);
 });
 
