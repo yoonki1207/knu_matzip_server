@@ -36,13 +36,12 @@ router.get("/", async (req, res, next) => {
 
 /* Update reviews by id */
 /* Update review */
-router.put("/:store_id", async (req, res, next) => {
-	// FIXME: 인증 미들웨어 추가 해야함
+router.put("/:store_id", userAuth, async (req, res, next) => {
 	const review = await reviewService.rewriteReview(
 		req.content,
 		req.body.rating,
 		req.body.store_id,
-		req.body.user_id
+		req.user.user_id
 	);
 	if (!review) {
 		console.log("failed");
@@ -54,7 +53,7 @@ router.put("/:store_id", async (req, res, next) => {
 });
 
 /* delete reviews */
-router.delete("/:store_id", async (req, res, next) => {
+router.delete("/:store_id", userAuth, async (req, res, next) => {
 	// FIXME: 인증 미들웨어 추가해야함.
 	if (!review) {
 		console.log("failed");
