@@ -6,6 +6,12 @@ const authService = require("../services/auth.service");
  * @param {NextFunction} next
  */
 const userAuth = async (req, res, next) => {
+	if (
+		req.headers.authorization === undefined ||
+		req.headers.authorization === null
+	) {
+		res.status(400).send("Required Bearer token");
+	}
 	const access_token = req.headers.authorization.split("Bearer ")[1];
 	const verify = await authService.verifyToken(access_token);
 	if (!verify) {
