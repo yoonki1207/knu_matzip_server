@@ -1,6 +1,6 @@
 const authService = require("../services/auth.service");
 /**
- *
+ *	req에 user를 넣어서 다음 미들웨어에 넘겨준다.
  * @param {Request<ParamsDictionary, any, any, qs.ParsedQs, Record<string, any>>} req
  * @param {Response<any, Record<string, any>, number>} res
  * @param {NextFunction} next
