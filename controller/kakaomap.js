@@ -2,6 +2,7 @@ const axios = require("axios");
 const express = require("express");
 const router = express.Router();
 const kakaoService = require("../services/kakaomap.service");
+const responseBody = require("../utils/responseBody");
 
 // Deprecated
 router.get("/map/:address", async (req, res) => {
@@ -15,27 +16,28 @@ router.get("/map/:address", async (req, res) => {
 			},
 		});
 
-		res.send(response.data); // 검색 결과를 JSON 형태로 반환합니다.
+		res.send(responseBody(200, "검색 결과를 반환합니다.", response.data)); // 검색 결과를 JSON 형태로 반환합니다.
 	} catch (error) {
 		console.error(error);
-		res.status(500).send("Internal Server Error"); // 에러 발생 시 500 에러를 반환합니다.
+		res.status(500).send(responseBody(500, "Internal Server Error", false)); // 에러 발생 시 500 에러를 반환합니다.
 	}
 });
 
 router.get("/cate/:category_group_code", async function (req, res, next) {
 	try {
 		const data = await kakaoService.getFoodsWithOptions(req.query);
-		res.send(data);
+		res.send(responseBody(200, "카테고리 지점 결과를 반환합니다.", data));
 	} catch (error) {
 		console.error(error);
-		res.status(500).send("Internal Server Error");
+		res.status(500).send(responseBody(500, "Internal Server Error", false));
 	}
 });
 
+/* 이미지 응답 라우터 */
 router.get("/place/:id", async (req, res, next) => {
 	const place_url = req.params.id;
 	const result = await kakaoService.getImageUrl(place_url);
-	res.send(result);
+	res.send(responseBody(200, "이미지 응답 완료.", result));
 });
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const express = require("express");
 const { userAuth } = require("../middlewares/authentication");
 const reviewService = require("../services/review.service");
+const responseBody = require("../utils/responseBody");
 const router = express.Router();
 
 /* Comments a review */
@@ -13,11 +14,11 @@ router.post("/:store_id", userAuth, async (req, res, next) => {
 		req.body.rating
 	);
 	if (!review) {
-		console.log("failed");
-		res.status(400).send("failed create review");
+		console.log("failed"); // DEBUG:
+		res.status(400).send(responseBody(400, "리뷰 생성 실패.", false));
 		return;
 	}
-	res.send(review);
+	res.send(responseBody(200, "성공", review));
 });
 
 /* Get reviews from a borad */
@@ -25,13 +26,13 @@ router.post("/:store_id", userAuth, async (req, res, next) => {
 router.get("/", async (req, res, next) => {
 	const review = await reviewService.getReview(req.body.store_id);
 	if (!review) {
-		console.log("failed");
+		console.log("failed"); // DEBUG:
 		res.status(400);
-		res.send("failed read review");
+		res.send(responseBody(400, "리뷰 읽기 실패.", false));
 		return;
 	}
 	// 리뷰를 볼 html 파일 링크 - render
-	res.send(review);
+	res.send(responseBody(200, "성공", review));
 });
 
 /* Update reviews by id */
@@ -44,24 +45,23 @@ router.put("/:store_id", userAuth, async (req, res, next) => {
 		req.user.user_id
 	);
 	if (!review) {
-		console.log("failed");
+		console.log("failed"); // DEBUG:
 		res.status(400);
-		res.send("failed update review");
+		res.send(responseBody(400, "리뷰 업데이트에 실패.", false));
 		return;
 	}
-	res.send(review);
+	res.send(responseBody(200, "성공", review));
 });
 
 /* delete reviews */
 router.delete("/:store_id", userAuth, async (req, res, next) => {
-	// FIXME: 인증 미들웨어 추가해야함.
 	if (!review) {
-		console.log("failed");
+		console.log("failed"); // DEBUG:
 		res.status(400);
-		res.send("failed delete review");
+		res.send(responseBody(400, "리뷰 삭제 실패.", false));
 		return;
 	}
-	res.send(review);
+	res.send(responseBody(200, "성공", review));
 });
 
 module.exports = router;
