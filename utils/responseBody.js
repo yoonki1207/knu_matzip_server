@@ -5,8 +5,8 @@
  * @param {object} data 응답 객체
  * @returns
  */
-const responseBody = (statusCode, msg, data) => {
-	const result = { status: statusCode, message: msg, data };
+const responseBody = (msg, data) => {
+	const result = { message: msg, data };
 	return result;
 };
 

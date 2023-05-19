@@ -15,7 +15,7 @@ router.get("/", userAuth, async (req, res, next) => {
 	const access_token = req.headers.authorization.split("Bearer ")[1];
 	const verify = await authService.getPayloadByToken(access_token);
 	console.log("asdasd", req.user); // DEBUG: 유저 출력
-	res.send(responseBody(200, `Verified! Hello, ${req.user.nickname}!`, true));
+	res.send(responseBody(`Verified! Hello, ${req.user.nickname}!`, true));
 });
 
 /* Login */
@@ -29,7 +29,8 @@ router.post(
 			return;
 		}
 		const isValid = await bcrypt.compare(req.body.password, user.password);
-		if (!isValid) res.status(400).send("Invalid password.");
+		if (!isValid)
+			res.status(400).send(responseBody("Invalid password.", false));
 		else {
 			// 다음 미들웨어
 			req.user = user;
@@ -38,7 +39,7 @@ router.post(
 	},
 	insertUserToken,
 	async (req, res) => {
-		res.send(responseBody(200, "Login Success!", true));
+		res.send(responseBody("Login Success!", true));
 	}
 );
 
@@ -57,14 +58,14 @@ router.post(
 
 		// 예외처리
 		if (!user) {
-			res.status(400).send(responseBody(400, "Invalid body.", false));
+			res.status(400).send(responseBody("Invalid body.", false));
 			return;
 		}
 		const newUser = await authService.getUser(req.body.email);
 
 		// 예외처리
 		if (!newUser) {
-			res.status(500).send(responseBody(500, "Cannot find user.", false));
+			res.status(500).send(responseBody("Cannot find user.", false));
 			return;
 		}
 		//다음 미들웨어
@@ -73,7 +74,7 @@ router.post(
 	},
 	insertUserToken,
 	async (req, res) => {
-		res.send(responseBody(200, "Signup successed!", true));
+		res.send(responseBody("Signup successed!", true));
 	}
 );
 
