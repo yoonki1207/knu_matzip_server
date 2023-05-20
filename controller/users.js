@@ -26,7 +26,7 @@ router.get("/", userAuth, async (req, res, next) => {
 		email,
 		role,
 	};
-	res.send(responseBody(200, true, user));
+	res.send(responseBody(true, user));
 });
 
 // DEBUG: 디버그용 라우터다. deprecated될 것.

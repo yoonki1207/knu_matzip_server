@@ -15,10 +15,10 @@ router.post("/:store_id", userAuth, async (req, res, next) => {
 	);
 	if (!review) {
 		console.log("failed"); // DEBUG:
-		res.status(400).send(responseBody(400, "리뷰 생성 실패.", false));
+		res.status(400).send(responseBody("리뷰 생성 실패.", false));
 		return;
 	}
-	res.send(responseBody(200, "성공", review));
+	res.send(responseBody("성공", review));
 });
 
 /* Get reviews from a borad */
@@ -28,11 +28,11 @@ router.get("/", async (req, res, next) => {
 	if (!review) {
 		console.log("failed"); // DEBUG:
 		res.status(400);
-		res.send(responseBody(400, "리뷰 읽기 실패.", false));
+		res.send(responseBody("리뷰 읽기 실패.", false));
 		return;
 	}
 	// 리뷰를 볼 html 파일 링크 - render
-	res.send(responseBody(200, "성공", review));
+	res.send(responseBody("성공", review));
 });
 
 /* Update reviews by id */
@@ -47,10 +47,10 @@ router.put("/:store_id", userAuth, async (req, res, next) => {
 	if (!review) {
 		console.log("failed"); // DEBUG:
 		res.status(400);
-		res.send(responseBody(400, "리뷰 업데이트에 실패.", false));
+		res.send(responseBody("리뷰 업데이트에 실패.", false));
 		return;
 	}
-	res.send(responseBody(200, "성공", review));
+	res.send(responseBody("성공", review));
 });
 
 /* delete reviews */
@@ -58,10 +58,10 @@ router.delete("/:store_id", userAuth, async (req, res, next) => {
 	if (!review) {
 		console.log("failed"); // DEBUG:
 		res.status(400);
-		res.send(responseBody(400, "리뷰 삭제 실패.", false));
+		res.send(responseBody("리뷰 삭제 실패.", false));
 		return;
 	}
-	res.send(responseBody(200, "성공", review));
+	res.send(responseBody("성공", review));
 });
 
 module.exports = router;
