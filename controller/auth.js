@@ -50,6 +50,7 @@ router.post(
 		// 패스워드 가져오기
 		const { password } = req.body;
 		// bcrypt 모듈로 패스워드 암호화
+		console.log(req.body, +process.env.BCRYPT_SALT);
 		const encrypt = await bcrypt.hash(password, +process.env.BCRYPT_SALT);
 		// req 객체에 암호화된 패스워드를 삽입
 		req.body.password = encrypt;
