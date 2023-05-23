@@ -22,8 +22,9 @@ const getPopular = async (req, res) => {
 const _getImageUrls = async (images) => {
 	const URL = `https://place.map.kakao.com/main/v/`;
 	var place_number = 0;
-	const result = await Promise.all(
-		images.map(async (place_url) => {
+	const urls = [];
+	for (let i = 0; i < images.length; i++) {
+		const getMainphotourl = async (place_url) => {
 			try {
 				place_number = parseInt(place_url);
 			} catch (error) {
@@ -33,9 +34,11 @@ const _getImageUrls = async (images) => {
 			const result = await axios.get(URL + place_number);
 			const basicInfo = result.data.basicInfo;
 			return await basicInfo.mainphotourl;
-		})
-	);
-	return result;
+		};
+		const url = await getMainphotourl(images[i]);
+		urls.push(url);
+	}
+	return urls;
 };
 
 module.exports = { getPopular };
