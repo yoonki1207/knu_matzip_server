@@ -17,6 +17,7 @@
 		"dotenv": "^16.0.3",
 		"express": "~4.16.1",
 		"express-winston": "^4.2.0",
+		"fs": "^0.0.1-security",
 		"http-errors": "~1.6.3",
 		"http-proxy-middleware": "^2.0.6",
 		"jade": "~1.11.0",

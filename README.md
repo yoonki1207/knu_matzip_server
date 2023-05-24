@@ -41,6 +41,7 @@ FLUSH PRIVILEGES;
 ```
 
 # Run
+Node의 버전은 v14.21.3입니다. 최신 노드는 `final_renegotiate:unsafe legacy renegotiation disabled`버그가 납니다.
 
 ```
 npm run dev

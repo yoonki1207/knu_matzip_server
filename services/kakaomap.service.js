@@ -88,6 +88,7 @@ const getBasicInfo = async (req, res) => {
 		const result = await _getBasicInfo(req.params.id);
 		res.send(result);
 	} catch (error) {
+		console.error(error);
 		res
 			.status(500)
 			.send("Kakaomap API를 불러오는 중 에러가 발생했습니다.", false);

@@ -7,6 +7,8 @@
 var app = require("../app");
 var debug = require("debug")("knu-matzip-server:server");
 var http = require("http");
+var https = require("https");
+var fs = require('fs');
 
 /**
  * Get port from environment and store in Express.
@@ -19,7 +21,17 @@ app.set("port", port);
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
+// Certifications
+const options = {
+	cert: fs.readFileSync(__dirname + '/../rootca.crt'),
+	key: fs.readFileSync(__dirname + '/../rootca.key')
+};
+
+// Create an HTTP server.
+// var server = http.createServer(app);
+
+// Create an HTTPS server
+var server = https.createServer(options, app);
 
 /**
  * Listen on provided port, on all network interfaces.

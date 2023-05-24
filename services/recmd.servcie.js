@@ -20,7 +20,7 @@ const getPopular = async (req, res) => {
  * @returns
  */
 const _getImageUrls = async (images) => {
-	const URL = `https://place.map.kakao.com/main/v/`;
+	const URL = `http://place.map.kakao.com/main/v/`;
 	var place_number = 0;
 	const urls = [];
 	for (let i = 0; i < images.length; i++) {
@@ -31,7 +31,10 @@ const _getImageUrls = async (images) => {
 				console.log(error);
 				return `Error: Cannot parse to Integer with ${place_url}`;
 			}
-			const result = await axios.get(URL + place_number);
+			const result = await axios.get(URL + place_number, {
+				headers: {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36',},
+			}
+			);
 			const basicInfo = result.data.basicInfo;
 			return await basicInfo.mainphotourl;
 		};

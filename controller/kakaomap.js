@@ -11,6 +11,6 @@ router.get("/stores", kakaoService.getStores);
 /* 이미지 응답 라우터 */
 router.get("/place/:id", kakaoService.getImageUrl);
 
-router.get("/basic", kakaoService.getBasicInfo);
+router.get("/basic/:id", kakaoService.getBasicInfo);
 
 module.exports = router;
