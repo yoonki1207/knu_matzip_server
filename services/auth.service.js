@@ -1,6 +1,97 @@
 const connection = require("../database/database");
 const jwt = require("jsonwebtoken");
 const database = require("../database/database");
+const bcrypt = require("bcrypt");
+const responseBody = require("../utils/responseBody");
+
+/**
+ * 유저 토큰이 유효한지 테스트합니다.
+ * @param {Request} req
+ * @param {Response} res
+ * @param {*} next
+ */
+const userValidation = async (req, res, next) => {
+	const access_token = req.headers.authorization.split("Bearer ")[1];
+	res.send(responseBody(`Verified! Hello, ${req.user.nickname}!`, true));
+};
+
+/**
+ * 로그인 성공시 next, 실패시 500을 response함.
+ * @param {Request} req
+ * @param {Reponse} res
+ * @param {*} next 성공하면 next()를 호출함.
+ * @returns
+ */
+const loginMiddleware = async (req, res, next) => {
+	// user data DB에서 가져오기 - getUser 참고
+	const user = await getUser(req.body.email);
+	if (!user) {
+		res.send("Not found user.");
+		return;
+	}
+	const isValid = await bcrypt.compare(req.body.password, user.password);
+	if (!isValid) res.status(400).send(responseBody("Invalid password.", false));
+	else {
+		// 다음 미들웨어
+		req.user = user;
+		next();
+	}
+};
+
+/**
+ * 로그인 성공 메시지
+ * @param {Request} req
+ * @param {Response} res
+ */
+const loginSuccess = async (req, res) => {
+	res.send(responseBody("Login Success!", true));
+};
+
+/**
+ * 회원가입 미들웨어입니다.
+ * 유효한 body가 요구됩니다.
+ * 필수로 birth_year, phone_number, email, password, nickname, gender 가 요구됩니다.
+ * @param {Request} req
+ * @param {Reponse} res
+ * @param {*} next
+ * @returns
+ */
+const signupMiddleware = async (req, res, next) => {
+	// 패스워드 가져오기
+	const { password } = req.body;
+	// bcrypt 모듈로 패스워드 암호화
+	console.log(req.body, +process.env.BCRYPT_SALT);
+	const encrypt = await bcrypt.hash(password, +process.env.BCRYPT_SALT);
+	// req 객체에 암호화된 패스워드를 삽입
+	req.body.password = encrypt;
+	// DB에 user 삽입. DB로직은 서.
+	const user = await createUser(req.body);
+
+	// 예외처리
+	if (!user) {
+		res.status(400).send(responseBody("Invalid body.", false));
+		return;
+	}
+	const newUser = await getUser(req.body.email);
+
+	// 예외처리
+	if (!newUser) {
+		res.status(500).send(responseBody("Cannot find user.", false));
+		return;
+	}
+	//다음 미들웨어
+	req.user = newUser;
+	next();
+};
+
+/**
+ * 회원가입 성공 메시지
+ * @param {Request} req
+ * @param {Response} res
+ */
+const signupSuccess = async (req, res) => {
+	res.send(responseBody("Signup successed!", true));
+};
 
 // access token으로 변경
 const getUser = async (email) => {
@@ -160,4 +251,9 @@ module.exports = {
 	createUser,
 	isExpriedToken,
 	findTokenWithRT,
+	loginMiddleware,
+	loginSuccess,
+	signupMiddleware,
+	signupSuccess,
+	userValidation,
 };
