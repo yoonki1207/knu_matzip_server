@@ -73,7 +73,7 @@ const getFoodsWithOptions = async ({
  */
 const getImageUrl = async (req, res) => {
 	const place_url = req.params.id;
-	const basicInfo = await getBasicInfo(place_url);
+	const basicInfo = await _getBasicInfo(place_url);
 	const image_url = basicInfo.mainphotourl;
 	res.send(responseBody("이미지 응답 완료", image_url));
 };
@@ -86,7 +86,7 @@ const getImageUrl = async (req, res) => {
 const getBasicInfo = async (req, res) => {
 	try {
 		const result = await _getBasicInfo(req.params.id);
-		res.send(result);
+		res.send(responseBody(`${req.params.id}의 기본 정보`, result));
 	} catch (error) {
 		console.error(error);
 		res
@@ -96,14 +96,14 @@ const getBasicInfo = async (req, res) => {
 	return;
 };
 
-const _getBasicInfo = async (place_url) => {
+const _getBasicInfo = async (place_id) => {
 	const URL = `https://place.map.kakao.com/main/v/`;
 	var place_number = 0;
 	try {
-		place_number = parseInt(place_url);
+		place_number = parseInt(place_id);
 	} catch (error) {
 		console.log(error);
-		return `Error: Cannot parse to Integer with ${place_url}`;
+		return `Error: Cannot parse to Integer with ${place_id}`;
 	}
 	const result = await axios.get(URL + place_number);
 	const basicInfo = result.data.basicInfo;
