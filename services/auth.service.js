@@ -23,6 +23,11 @@ const getUserById = async (user_id) => {
 	}
 };
 
+/**
+ * It returns json like {"email": string,"nickname": string, "iat": number, "exp": number}
+ * @param {string} token
+ * @returns string|jwt.JwtPayload|null
+ */
 const getPayloadByToken = (token) => {
 	try {
 		const payload = jwt.decode(token);
