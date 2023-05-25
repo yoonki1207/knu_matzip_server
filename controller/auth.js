@@ -9,7 +9,7 @@ const { userAuth, insertUserToken } = require("../middlewares/authentication");
 /* User validation */
 router.get("/", userAuth, authService.userValidation);
 
-/* Login */
+/* Login */ //TODO: 로그인 시 DB에 마지막으로 로그인한 기록 남기기
 router.post(
 	"/login",
 	authService.loginMiddleware,
